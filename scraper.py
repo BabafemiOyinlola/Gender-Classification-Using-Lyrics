@@ -4,13 +4,9 @@ import json
 import requests
 from musixmatch import Musixmatch
 from bs4 import BeautifulSoup
-import lyricsgenius as genius
-from genuis_token import token
-from musix import api_key_2
+from musix import api_key
 
-
-api = genius.Genius(token)
-musixmatch = Musixmatch(api_key_2)
+musixmatch = Musixmatch(api_key)
 
 #store song, year and artist of song
 def get_music_list(year, soup, music):
@@ -29,7 +25,7 @@ def url(year, genre_path):
     soup = BeautifulSoup(req.text, "html.parser")
     return soup
 
-#iterate through years needed
+#scrape for years wanted
 def get_song_details(start, end, genre_path, genre):
     print("Retriving %s ....." %(genre))
     music = []
@@ -49,9 +45,7 @@ def get_artists_albums(filepath, filename, artist_train=None):
 
     artists_and_track = []
 
-    # for item in range(len(details), 0, 1):
     for i in range(0, len(details)-1):
-    # for i in range(len(details)-1, 0, -1):
         item = details[i]
 
         #this ensures data isn't replicated in the training data and data used for embedding
@@ -111,7 +105,6 @@ def get_artists_albums(filepath, filename, artist_train=None):
                     continue
             item['albums'] = album_temp
             artists_and_track.append(item)
-            # count = i
             count = i 
             print(str(count) + " " + item['artist'])
         except Exception as e:
@@ -119,74 +112,14 @@ def get_artists_albums(filepath, filename, artist_train=None):
             print("Exception thrown ", item['artist'])
             continue
 
-    file1 = open(filename+"backup.txt","w")#write mode 
-    file1.write(str(artists_and_track)) 
-    file1.close()
-
     with open(filename, 'w') as f:
         json.dump(artists_and_track, f) #save details
-
     return artists_and_track
 
+#scrape names of artists from Billboard
+rnb_hiphop  = get_song_details(1980, 2019, "r-b-hip-hop-songs", "rnb_hip-hop")
 
-#update music json with lyrics
-def get_lyrics(music):
-    try:
-        for song in music:
-            lyrics = api.search_song(song['song'], song['artist']) 
-            if lyrics == None:
-                continue
-            song['lyrics'] = lyrics.lyrics
-            print("Year: ",song['year'])
-    except:
-        print ("%s not found" % (song['song']))
-
-    filename = "billboard_top_songs_lyrics_new.json"   #save song details
-    with open(filename, 'w') as f:
-        json.dump(music, f)
-    return music
+#retrive lyrics from Musixmatch
+all_rnb = get_artists_albums("billboard_top_rnb_hip-hop_(1980_2018).json", "All_Rnb")
 
 
-
-# rnb_hiphop  = get_song_details(1980, 2019, "r-b-hip-hop-songs", "rnb_hip-hop")
-# pop = get_song_details(1980, 2019, "adult-contemporary", "pop-adult-contemporary")
-# country = get_song_details(1980, 2019, "country-songs", "country")
-
-
-# all_rnb = get_artists_albums("/Users/oyinlola/Desktop/MSc Data Science/LENT TERM/SCC 413 - Applied Data Mining/Research Projects/billboard_top_rnb_hip-hop_(1980_2018).json", "All_Rnb")
-# all_pop = get_artists_albums("/Users/oyinlola/Desktop/MSc Data Science/LENT TERM/SCC 413 - Applied Data Mining/Research Projects/billboard_top_pop-adult-contemporary_(1980_2018).json", "All_pop2")
-# all_country = get_artists_albums("/Users/oyinlola/Desktop/MSc Data Science/LENT TERM/SCC 413 - Applied Data Mining/Research Projects/billboard_top_country_(1980_2018).json", "All_country1")
-
-
-def get_lyrics_for_word2vec(folder, saved_file, save_as):
-    #get data in training data
-    artists_train = []
-
-    for filepath in os.listdir(folder):
-        base = os.path.basename(filepath)
-        base = os.path.splitext(base)
-        artist = (base)[0]
-        artists_train.append(artist)
-    
-
-    word2vec_lyrics =  get_artists_albums(saved_file, save_as, artists_train)
-
-    return word2vec_lyrics
-
-
-folder = "/Users/oyinlola/Desktop/MSc Data Science/LENT TERM/SCC 413 - Applied Data Mining/Research Projects/Lyrics/new"
-all_artists = "/Users/oyinlola/Desktop/MSc Data Science/LENT TERM/SCC 413 - Applied Data Mining/Research Projects/billboard_top_country_(1980_2018).json"
-save = "word2vec"
-word2vec = get_lyrics_for_word2vec(folder, all_artists, save)
-
-# filename = "country1.json"   #save song details
-# with open(filename, 'w') as f:
-#     json.dump(all_country, f)
-
-
-
-# file1 = open("pop111.txt","w")#write mode 
-# file1.write(str(all_country)) 
-# file1.close()
-
-print("Done")

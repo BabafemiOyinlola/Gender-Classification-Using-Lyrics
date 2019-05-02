@@ -19,8 +19,7 @@ def convert_to_json(files):
     for file in files:
         json_data = read_file(file)
         converted_form = [ast.literal_eval(item) for item in json_data]
-        data.append(converted_form[0])
-    
+        data.append(converted_form[0]) 
     return data
 
 def get_rows(file_data):
@@ -37,9 +36,9 @@ def get_rows(file_data):
 #remove features or collaborations
 def remove_features(dataframe):
     no_features = []
-    feat_re = "[&,+\(\)/]"
+    feat_re = "r[&,+\(\)/]"
 
-    for index, row in df_unique_artists.iterrows():
+    for index, row in dataframe.iterrows():
         if re.search(feat_re, row['artist']) or "Featuring" in row['artist']:
             continue
         hold = []
@@ -69,17 +68,19 @@ def get_all_artists_songs(temp):
 #write song to files: a song on a line 
 def save_each_artist(all_songs, destination):
     for i in all_songs:
-        for artist, all_tracks in i.items():
-            filename = destination + artist + ".txt"
-            # filename = "/Users/oyinlola/Desktop/MSc Data Science/LENT TERM/SCC 413 - Applied Data Mining/Research Projects/Lyrics/word2vec/" + artist + ".txt"
-            with open(filename, "w") as text_file:
-                for track in all_tracks:
-                    track = track + "\n"
-                    text_file.write(track)
-            print("Saved ", artist)
+        try:
+            for artist, all_tracks in i.items():
+                filename = destination + artist + ".txt"
+                with open(filename, "w") as text_file:
+                    for track in all_tracks:
+                        track = track + "\n"
+                        text_file.write(track)
+                print("Saved ", artist)
+        except:
+            continue
 
 def combine_and_save(files, destination):
-    data = convert_to_json(word2vec)
+    data = convert_to_json(files)
     rows = get_rows(data)
     df = pd.DataFrame(rows)
     df_unique_artists = df.drop_duplicates(subset=['artist']) #select unique artists
@@ -89,8 +90,7 @@ def combine_and_save(files, destination):
 
 
 if __name__ == "__main__":
-    files = ["rnb:hiphop1.txt", "rnb:hiphop2.txt", "rnb:hiphop3.txt", "rnb:hiphop4.txt"] #example files
-    word2vec = ["word2vec.txt"]
-
-    combine_and_save(word2vec)
+    rnb_hiphop_files = ["rnb:hiphop1.txt", "rnb:hiphop2.txt", "rnb:hiphop3.txt", "rnb:hiphop4.txt"] #example files
+    destination = "genre/rnb/" #destination path
+    combine_and_save(rnb_hiphop_files, destination)
 
