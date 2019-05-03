@@ -91,6 +91,6 @@ def combine_and_save(files, destination):
 
 if __name__ == "__main__":
     rnb_hiphop_files = ["rnb:hiphop1.txt", "rnb:hiphop2.txt", "rnb:hiphop3.txt", "rnb:hiphop4.txt"] #example files
-    destination = "genre/rnb/" #destination path
+    destination = "lyrics/"
     combine_and_save(rnb_hiphop_files, destination)
 

@@ -1,0 +1,7 @@
+The data used can be found in the data folder in the zipped file - code_data.zip shared via Box.
+
+The data folder contains two sub folders - a folder for male and another for female artists.
+
+Each text file in each subfolder has all the lyrics for every track (singles) in every album owned by the artist. A song is stored per line.
+
+The data collected was filtered of bands and collaboration with other artists to avoid bias in results.

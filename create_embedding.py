@@ -1,6 +1,5 @@
 import os
 from gensim.models.word2vec import Word2Vec
-from preprocessing import replace_apostrophe, preprocess, tokenise, remove_stopwords
 
 name_of_model = "lyrics_word_embeddings"
 feature_size = 200
@@ -21,5 +20,3 @@ def train_word_embeddings(corpus):
         print("Returning existing model")
     print("%d songs used in training model" % len(corpus))
     return model
-
-
