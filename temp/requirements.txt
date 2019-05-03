@@ -1,6 +1,0 @@
-afinn
-beautifulsoup4
-ftfy
-gensim
-lyricsgenius
-nltk
